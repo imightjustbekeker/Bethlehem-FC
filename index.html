@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bethlehem FC | Depth Chart</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Sleek Dark Mode Palette */
+            --bg-base: #000000;
+            --bg-surface: #0a0a0a;
+            --bg-panel: #111111;
+            --border-dim: #262626;
+            --border-hover: #333333;
+            --text-main: #ededed;
+            --text-muted: #888888;
+            --text-faint: #444444;
+            
+            /* Accents */
+            --accent: #ffffff;
+            --rank-1: #d4af37; /* Desaturated Gold */
+            --rank-2: #c0c0c0; /* Silver */
+            --rank-3: #b08d57; /* Desaturated Bronze */
+            --danger: #ef4444;
+            --danger-bg: rgba(239, 68, 68, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        /* Minimalist Header */
+        .page-header {
+            margin-bottom: 4rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border-dim);
+        }
+
+        .label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: var(--text-main);
+            letter-spacing: -0.03em;
+        }
+
+        /* Grid Layout */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 4rem;
+        }
+
+        /* Clean Panel Styling */
+        .panel {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-dim);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: border-color 0.2s ease;
+        }
+
+        .panel:hover {
+            border-color: var(--border-hover);
+        }
+
+        .panel-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-dim);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-main);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .position-tag {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--bg-surface);
+            background-color: var(--text-main);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+        }
+
+        /* List Styling */
+        .player-list {
+            list-style: none;
+        }
+
+        .player-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            border-bottom: 1px solid var(--border-dim);
+            font-size: 0.875rem;
+        }
+
+        .player-item:last-child {
+            border-bottom: none;
+        }
+
+        .rank-id {
+            width: 2rem;
+            font-variant-numeric: tabular-nums;
+            color: var(--text-faint);
+            font-weight: 500;
+        }
+
+        /* Subtle Podium Colors */
+        .player-item:nth-child(1) .rank-id { color: var(--rank-1); font-weight: 600; }
+        .player-item:nth-child(2) .rank-id { color: var(--rank-2); font-weight: 600; }
+        .player-item:nth-child(3) .rank-id { color: var(--rank-3); font-weight: 600; }
+
+        .player-name {
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        .player-tbd {
+            color: var(--text-faint);
+        }
+
+        /* Info Section */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 800px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Criteria Table */
+        .criteria-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .criteria-table td {
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-dim);
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .criteria-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .rank-badge {
+            display: inline-block;
+            width: 32px;
+            height: 32px;
+            line-height: 32px;
+            text-align: center;
+            background-color: var(--bg-panel);
+            border: 1px solid var(--border-dim);
+            border-radius: 4px;
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-right: 1rem;
+        }
+
+        .desc-highlight {
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        /* Rules List */
+        .rules-list {
+            list-style: none;
+            padding: 1rem 1.5rem;
+        }
+
+        .rules-list li {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .rules-list li::before {
+            content: "";
+            display: inline-block;
+            width: 4px;
+            height: 4px;
+            background-color: var(--border-dim);
+            border-radius: 50%;
+            margin-right: 12px;
+        }
+
+        .penalty-box {
+            margin: 0 1.5rem 1.5rem 1.5rem;
+            padding: 0.875rem;
+            background-color: var(--danger-bg);
+            border-left: 2px solid var(--danger);
+            border-radius: 0 4px 4px 0;
+            font-size: 0.8rem;
+            color: var(--danger);
+            font-weight: 500;
+            letter-spacing: 0.02em;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="page-header">
+            <span class="label">Internal Squad Rankings</span>
+            <h1 class="title">Bethlehem FC</h1>
+        </header>
+
+        <!-- Position Grid -->
+        <div class="dashboard-grid">
+            
+            <!-- CF Panel -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">Center Forwards</h2>
+                    <span class="position-tag">CF</span>
+                </div>
+                <ul class="player-list">
+                    <li class="player-item"><span class="rank-id">01</span><span class="player-tbd">TBD</span></li>
+                    <li class="player-item"><span class="rank-id">02</span><span class="player-tbd">TBD</span></li>
+                    <li class="player-item"><span class="rank-id">03</span><span class="player-tbd">TBD</span></li>
+                    <li class="player-item"><span class="rank-id">04</span><span class="player-tbd">TBD</span></li>
+                    <li class="player-item"><span class="rank-id">05</span><span class="player-tbd">TBD</span></li>
+                    <li class="player-item"><span class="rank-id">06</span><span class="player-tbd">TBD</span></li>
+                    <li class="player-item"><span class="rank-id">07</span><span class="player-tbd">TBD</span></li>
+                    <li class="player-item"><span class="rank-id">08</span><span class="player-tbd">TBD</span></li>
+                    <li class="player-item"><span class="rank-id">09</span><span class="player-tbd">TBD</span></li>
+                    <li class="player-item"><span class="rank-id">10</span><span class="player-tbd">TBD</span></li>
+                </ul>
+            </div>
+
+            <!-- Wingers Panel -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">Wingers</h2>
+                    <span class="position-tag">W</span>
+                </div>
+                <ul class="player-list">
+                    <li class="player-item"><span class="rank-id">01</span><span class="player-name">Kenny</span></li>
+                    <li class="player-item"><span class="rank-id">02</span><span class="player-name">Envy</span></li>
+                    <li class="player-item"><span class="rank-id">03</span><span class="player-tbd">TBD</span></li>
+                    <li class="player-item"><span class="rank-id">04</span><span class="player-tbd">TBD</span></li>
+                    <li class="player-item"><span class="rank-id">05</span><span class="player-tbd">TBD</span></li>
+                    <li class="player-item"><span class="rank-id">06</span><span class="player-tbd">TBD</span></li>
+                    <li class="player-item"><span class="rank-id">07</span><span class="player-tbd">TBD</span></li>
+                    <li class="player-item"><span class="rank-id">08</span><span class="player-tbd">TBD</span></li>
+                    <li class="player-item"><span class="rank-id">09</span><span class="player-tbd">TBD</span></li>
+                    <li class="player-item"><span class="rank-id">10</span><span class="player-tbd">TBD</span></li>
+                </ul>
+            </div>
+
+            <!-- CM Panel -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">Center Mids</h2>
+                    <span class="position-tag">CM</span>
+                </div>
+                <ul class="player-list">
+                    <li class="player-item"><span class="rank-id">01</span><span class="player-name">Andy</span></li>
+                    <li class="player-item"><span class="rank-id">02</span><span class="player-tbd">TBD</span></li>
+                    <li class="player-item"><span class="rank-id">03</span><span class="player-tbd">TBD</span></li>
+                    <li class="player-item"><span class="rank-id">04</span><span class="player-tbd">TBD</span></li>
+                    <li class="player-item"><span class="rank-id">05</span><span class="player-tbd">TBD</span></li>
+                    <li class="player-item"><span class="rank-id">06</span><span class="player-tbd">TBD</span></li>
+                    <li class="player-item"><span class="rank-id">07</span><span class="player-tbd">TBD</span></li>
+                    <li class="player-item"><span class="rank-id">08</span><span class="player-tbd">TBD</span></li>
+                    <li class="player-item"><span class="rank-id">09</span><span class="player-tbd">TBD</span></li>
+                    <li class="player-item"><span class="rank-id">10</span><span class="player-tbd">TBD</span></li>
+                </ul>
+            </div>
+
+            <!-- GK Panel -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">Goalkeepers</h2>
+                    <span class="position-tag">GK</span>
+                </div>
+                <ul class="player-list">
+                    <li class="player-item"><span class="rank-id">01</span><span class="player-name">V1</span></li>
+                    <li class="player-item"><span class="rank-id">02</span><span class="player-tbd">TBD</span></li>
+                    <li class="player-item"><span class="rank-id">03</span><span class="player-tbd">TBD</span></li>
+                    <li class="player-item"><span class="rank-id">04</span><span class="player-tbd">TBD</span></li>
+                    <li class="player-item"><span class="rank-id">05</span><span class="player-tbd">TBD</span></li>
+                    <li class="player-item"><span class="rank-id">06</span><span class="player-tbd">TBD</span></li>
+                    <li class="player-item"><span class="rank-id">07</span><span class="player-tbd">TBD</span></li>
+                    <li class="player-item"><span class="rank-id">08</span><span class="player-tbd">TBD</span></li>
+                    <li class="player-item"><span class="rank-id">09</span><span class="player-tbd">TBD</span></li>
+                    <li class="player-item"><span class="rank-id">10</span><span class="player-tbd">TBD</span></li>
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- System & Conduct -->
+        <div class="info-grid">
+            
+            <!-- Tier System -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">Evaluation Metrics</h2>
+                </div>
+                <div style="padding: 0 1.5rem;">
+                    <table class="criteria-table">
+                        <tbody>
+                            <tr>
+                                <td><span class="rank-badge">S</span></td>
+                                <td><span class="desc-highlight">Best players</span> — Elite status across the board.</td>
+                            </tr>
+                            <tr>
+                                <td><span class="rank-badge">A</span></td>
+                                <td><span class="desc-highlight">Good players</span> — Highly reliable in their roles.</td>
+                            </tr>
+                            <tr>
+                                <td><span class="rank-badge">B</span></td>
+                                <td><span class="desc-highlight">Developing</span> — Needs to improve 1 skill to become A (Passing, Shooting, Saving, etc).</td>
+                            </tr>
+                            <tr>
+                                <td><span class="rank-badge">C</span></td>
+                                <td><span class="desc-highlight">Raw Potential</span> — Needs to improve multiple mechanics.</td>
+                            </tr>
+                            <tr>
+                                <td><span class="rank-badge">D</span></td>
+                                <td><span class="desc-highlight">New Players</span> — Mostly beginners learning the basics.</td>
+                            </tr>
+                            <tr>
+                                <td><span class="rank-badge">F</span></td>
+                                <td><span class="desc-highlight">Fundamentals</span> — Requires training in every skill.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Rules -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">Regulations</h2>
+                </div>
+                <ul class="rules-list">
+                    <li>No racism</li>
+                    <li>No homophobia</li>
+                    <li>No doxxing</li>
+                    <li>No gore</li>
+                    <li>No NSFW content</li>
+                </ul>
+                <div class="penalty-box">
+                    Breach of regulations results in an immediate lock out.
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>
